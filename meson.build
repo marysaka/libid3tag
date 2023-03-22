@@ -71,7 +71,7 @@ if is_windows
 		sources: [id3tag_header],
 		c_args: project_arguments,
 		dependencies: zlib,
-		install: true,
+		install: not meson.is_subproject(),
 	)
 else
 	id3tag = library(
@@ -86,7 +86,9 @@ else
 	)
 endif
 
-install_headers(id3tag_header)
+if not meson.is_subproject()
+	install_headers(id3tag_header)
+endif
 
 id3tag_dep = declare_dependency(
 	link_with: id3tag,
@@ -96,8 +98,10 @@ id3tag_dep = declare_dependency(
 
 pkg = import('pkgconfig')
 
-pkg.generate(
-	id3tag,
-	description: 'ID3 tag manipulation library for MP3 files',
-	url: 'https://codeberg.org/tenacityteam/libid3tag',
-)
+if not meson.is_subproject()
+	pkg.generate(
+		id3tag,
+		description: 'ID3 tag manipulation library for MP3 files',
+		url: 'https://codeberg.org/tenacityteam/libid3tag',
+	)
+endif
